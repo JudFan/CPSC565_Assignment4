@@ -7,11 +7,49 @@ public class LSystem
     public List<Rule> rules;
 
     public List<Symbol> currentString;
+    public bool canGoOn;
+
+    public LSystem(List<Rule> ruleInput, List<Symbol> symbolInput)
+    {
+        rules = ruleInput;
+        currentString = symbolInput;
+    }
 
     public void reset()
     {
         
     }
 
-    public void step(){}
+    public void step()
+    {
+        canGoOn = false; 
+
+        for (int i = 0; i < currentString.Count; i++)
+        {
+            foreach (Rule rule in rules)
+            {
+                Debug.Log("a rule was checked " + currentString[i].expressAsString());
+                List<Symbol> result = rule.RuleChange(currentString[i]);
+
+                //if(result is not null)
+                //{
+                //    canGoOn = true;
+                //    currentString.RemoveAt(i);
+                //    currentString.InsertRange(i, result);
+                //}
+            }
+        }
+    }
+
+    public string convertToString()
+    {
+        string result = "";
+
+        foreach (Symbol sym in currentString)
+        {
+            result += sym.expressAsString();
+        }
+
+        return result;
+    }
 }

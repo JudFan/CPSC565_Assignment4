@@ -16,6 +16,7 @@ public class WorldManager : MonoBehaviour
     /// </summary>
     public List<LSystem> system;
 
+
     #endregion
 
     #region Initialization
@@ -25,7 +26,25 @@ public class WorldManager : MonoBehaviour
     /// </summary>
     void Awake()
     {
-        
+        Symbol grow = new Symbol('G');
+        Symbol bloom = new Symbol('B');
+
+        List<Symbol> intoBloomOutput = new List<Symbol> {grow, bloom};
+        List<Symbol> intoBloomOutput2 = new List<Symbol> {bloom, grow};
+
+        Rule intoBloom = new Rule(grow, intoBloomOutput);
+        Rule bloomGrow = new Rule(bloom, intoBloomOutput2);
+
+        List<Rule> ruleList = new List<Rule> {intoBloom, bloomGrow};
+
+        LSystem sys1 = new LSystem(ruleList, new List<Symbol> {grow});
+
+        for(int i = 0; i < 1; i++)
+        {
+            sys1.step();
+            Debug.Log("At index " + i + ": Current L-String = " + sys1.convertToString());
+        }
+
     }
 
     /// <summary>
