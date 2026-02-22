@@ -7,7 +7,7 @@ namespace Assign4.UI
     public class UI_for_Setup : MonoBehaviour
     {
         //Fields:
-        public Rule selectedRule;
+        public int selectedRule;
         public int angle;
         public int numOfPetals;
         public Text output;
@@ -20,6 +20,7 @@ namespace Assign4.UI
         {
             angle = 0;
             numOfPetals = 0;
+            selectedRule = 1;
             output.text = "Angle of Bloom:\n" + angle;
             output2.text = "Number of Petals: " + numOfPetals;
         }
@@ -47,11 +48,11 @@ namespace Assign4.UI
             //Debug.Log(value);
             if(index == 0)
             {
-                Debug.Log("1");
+                selectedRule = 1;
             }
             else if(index == 1)
             {
-                Debug.Log("2");
+                selectedRule = 2;
             }
         }
     }

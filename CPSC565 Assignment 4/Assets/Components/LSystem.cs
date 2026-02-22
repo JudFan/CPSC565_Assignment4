@@ -24,22 +24,32 @@ public class LSystem
     {
         canGoOn = false; 
 
+        List<Symbol> newString = new List<Symbol>();
+
         for (int i = 0; i < currentString.Count; i++)
         {
+            bool foundARuleMatch = false;
             foreach (Rule rule in rules)
             {
                 Debug.Log("a rule was checked " + currentString[i].expressAsString());
                 List<Symbol> result = rule.RuleChange(currentString[i]);
 
-                //if(result is not null)
-                //{
-                //    canGoOn = true;
-                //    currentString.RemoveAt(i);
-                //    currentString.InsertRange(i, result);
-                //}
+
+                if(result is not null)
+                {
+                    canGoOn = true;
+                    foundARuleMatch = true;
+                    newString.InsertRange(newString.Count, result);
+                }
+            }
+            if(!foundARuleMatch)
+            {
+                newString.Add(currentString[i]); 
             }
         }
+        currentString = newString;
     }
+    
 
     public string convertToString()
     {

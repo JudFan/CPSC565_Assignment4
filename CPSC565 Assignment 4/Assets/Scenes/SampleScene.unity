@@ -1340,6 +1340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecc6514ed77d00d4d8a30028be1e371c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assign4.UI.UI_for_Setup
+  selectedRule: 0
   angle: 0
   numOfPetals: 0
   output: {fileID: 1453718944}
@@ -1635,6 +1636,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2053196054}
+        m_TargetAssemblyTypeName: Turtle, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3244,6 +3257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b20e59e630b96b4384f86e37a7e3230, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldManager
+  ui: {fileID: 478963810}
 --- !u!4 &2053196056
 Transform:
   m_ObjectHideFlags: 0

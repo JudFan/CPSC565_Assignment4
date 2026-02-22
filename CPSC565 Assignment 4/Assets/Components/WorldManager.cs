@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assign4.UI;
 
 
 
@@ -14,7 +15,22 @@ public class WorldManager : MonoBehaviour
     /// <summary>
     /// List of L systems to use
     /// </summary>
-    public List<LSystem> system;
+    public List<LSystem> systems;
+
+    /// <summary>
+    /// The L System chosen by the user
+    /// </summary>
+    public LSystem chosenSystem;
+
+    /// <summary>
+    /// The UI it grabs info from
+    /// </summary>
+    public UI_for_Setup ui;
+
+    /// <summary>
+    /// The Turtle the manager will pass the final L system mutated string to
+    /// </summary>
+    public Turtle turtle;
 
 
     #endregion
@@ -35,23 +51,29 @@ public class WorldManager : MonoBehaviour
         Rule intoBloom = new Rule(grow, intoBloomOutput);
         Rule bloomGrow = new Rule(bloom, intoBloomOutput2);
 
-        List<Rule> ruleList = new List<Rule> {intoBloom, bloomGrow};
+        List<Rule> ruleList = new List<Rule> {intoBloom};
+
+        List<Rule> ruleList2 = new List<Rule> {bloomGrow};
 
         LSystem sys1 = new LSystem(ruleList, new List<Symbol> {grow});
 
-        for(int i = 0; i < 1; i++)
-        {
-            sys1.step();
-            Debug.Log("At index " + i + ": Current L-String = " + sys1.convertToString());
-        }
+        LSystem sys2 = new LSystem(ruleList2, new List<Symbol> {grow});
+
+        systems = new List<LSystem>();
+
+        systems.Add(sys1);
+        systems.Add(sys2);
+        
 
     }
 
     /// <summary>
-    /// Called after every awake has been called.
+    /// Called when start button is pressed
     /// </summary>
-    private void Start()
+    public void Execute()
     {
+        LoadSystem();
+        GenerateStuct();
     }
 
     
@@ -63,13 +85,28 @@ public class WorldManager : MonoBehaviour
     // Choose a System
     void LoadSystem()
     {
-        
+        Debug.Log(ui.selectedRule);
+
+        if(ui.selectedRule == 1)
+        {
+            chosenSystem = systems[0];
+        }
+        else if (ui.selectedRule == 2)
+        {
+            chosenSystem = systems[1];
+        }
     }
 
     // After choosing a L system, create the string
     void GenerateStuct()
     {
-        
+        for(int i = 0; i < 2; i++)
+        {
+            chosenSystem.step();
+            Debug.Log("At index " + i + ": Current L-String = " + chosenSystem.convertToString());
+        }
+
+        turtle.LSystemCommand = chosenSystem.convertToString();
     }
 
     // Reset the world if need be
