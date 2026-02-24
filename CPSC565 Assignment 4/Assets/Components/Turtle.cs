@@ -62,12 +62,33 @@ public class Turtle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(LSystemCommand is not null)
+        if(LSystemCommand is not null && LSystemCommand.Length > 0)
         {
             Debug.Log("Turtle received: " + LSystemCommand);
-            LSystemCommand = null;
+            switch (LSystemCommand[0])
+            {
+                case 'A':
+                    Debug.Log('A');
+                    break;
+                case 'B':
+                    Debug.Log('B');
+                    break;
+                case 'G':
+                    Debug.Log('G');
+                    break;
+                case 'P':
+                    Debug.Log('P');
+                    break;
+                case 'p':
+                    Debug.Log('p');
+                    break;
+                default:
+                    break;
+            }
+            LSystemCommand = LSystemCommand.Remove(0,1);
         }
-        shape.transform.RotateAround(new Vector3(1,0,1), new Vector3(-1,0,1), 2);
+        //shape.transform.RotateAround(new Vector3(1,0,1), new Vector3(-1,0,1), 2);
+        //Grow();
         // Divide ui.Angle by 2 so you know how many times we need to unfurl the petal
 
         // Also make a symbol to add a game object (petal) to a list of objects to rotate (and what axis to rotate by)
@@ -81,5 +102,26 @@ public class Turtle : MonoBehaviour
 
         GameObject stem = LGeom.Cylinder(position, endpt, 0.5f, material: MaterialList[0]);
         position = endpt;
+        height++;
     }
+
+    void SetupPetal()
+    {
+        //Scenario1: Building foundation of petal (rectangle/square)
+
+        //Scenario2: Building edge of petal (triangle)
+
+    }
+
+    void AddToBloom()
+    {
+        
+    }
+
+    void Bloom()
+    {
+        
+    }
+
+    // 2nd idea: use randomised param to make a turtle grow a tree, and randomly decide if the tree sprouts more branches/leaves or sprouts a fruit.
 }
