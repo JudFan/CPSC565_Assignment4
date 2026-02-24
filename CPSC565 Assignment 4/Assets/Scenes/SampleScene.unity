@@ -231,6 +231,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7830d3729081742428feb74cd99d7bb7, type: 2}
   - {fileID: 2100000, guid: 2a4b542bbb60465428557e794f67f0b4, type: 2}
   LSystemCommand: 
+  position: {x: 0, y: 0, z: 0}
+  ui: {fileID: 0}
+  shape: {fileID: 0}
 --- !u!4 &125952226
 Transform:
   m_ObjectHideFlags: 0
@@ -684,7 +687,7 @@ GameObject:
   - component: {fileID: 353767669}
   - component: {fileID: 353767668}
   m_Layer: 5
-  m_Name: NumOfPetalsText
+  m_Name: NumOfIterationsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1283,7 +1286,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Number of Petals: 0'
+  m_Text: 'Number of L-System Iterations: 0'
 --- !u!222 &461827130
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1342,7 +1345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assign4.UI.UI_for_Setup
   selectedRule: 0
   angle: 0
-  numOfPetals: 0
+  numOfIters: 0
   output: {fileID: 1453718944}
   output2: {fileID: 461827129}
 --- !u!4 &478963811
@@ -1629,25 +1632,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 125952225}
-        m_TargetAssemblyTypeName: Turtle, Assembly-CSharp
+      - m_Target: {fileID: 2053196055}
+        m_TargetAssemblyTypeName: WorldManager, Assembly-CSharp
         m_MethodName: Execute
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 2053196054}
-        m_TargetAssemblyTypeName: Turtle, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2180,7 +2171,7 @@ GameObject:
   - component: {fileID: 1223060184}
   - component: {fileID: 1223060185}
   m_Layer: 5
-  m_Name: NumOfPetals
+  m_Name: NumOfIterations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2252,8 +2243,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 236615416}
   m_HandleRect: {fileID: 1417740608}
   m_Direction: 0
-  m_MinValue: 3
-  m_MaxValue: 7
+  m_MinValue: 1
+  m_MaxValue: 10
   m_WholeNumbers: 1
   m_Value: 3
   m_OnValueChanged:
@@ -2528,7 +2519,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 18
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -3258,6 +3249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldManager
   ui: {fileID: 478963810}
+  turtle: {fileID: 125952225}
 --- !u!4 &2053196056
 Transform:
   m_ObjectHideFlags: 0

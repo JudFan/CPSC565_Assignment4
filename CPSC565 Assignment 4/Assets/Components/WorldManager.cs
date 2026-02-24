@@ -100,7 +100,9 @@ public class WorldManager : MonoBehaviour
     // After choosing a L system, create the string
     void GenerateStuct()
     {
-        for(int i = 0; i < 2; i++)
+        chosenSystem.reset(); 
+        
+        for(int i = 0; i < ui.numOfIters; i++)
         {
             chosenSystem.step();
             Debug.Log("At index " + i + ": Current L-String = " + chosenSystem.convertToString());

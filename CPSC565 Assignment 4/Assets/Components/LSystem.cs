@@ -8,16 +8,18 @@ public class LSystem
 
     public List<Symbol> currentString;
     public bool canGoOn;
+    private List<Symbol> axiom;
 
     public LSystem(List<Rule> ruleInput, List<Symbol> symbolInput)
     {
         rules = ruleInput;
         currentString = symbolInput;
+        axiom = symbolInput;
     }
 
     public void reset()
     {
-        
+        currentString = axiom;
     }
 
     public void step()

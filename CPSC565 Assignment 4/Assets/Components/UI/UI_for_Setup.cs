@@ -9,7 +9,7 @@ namespace Assign4.UI
         //Fields:
         public int selectedRule;
         public int angle;
-        public int numOfPetals;
+        public int numOfIters;
         public Text output;
         public Text output2;
 
@@ -19,17 +19,17 @@ namespace Assign4.UI
         void Start()
         {
             angle = 0;
-            numOfPetals = 0;
+            numOfIters = 0;
             selectedRule = 1;
             output.text = "Angle of Bloom:\n" + angle;
-            output2.text = "Number of Petals: " + numOfPetals;
+            output2.text = "Number of L-System Iterations: " + numOfIters;
         }
 
         // Update is called once per frame
         void Update()
         {
             output.text = "Angle of Bloom:\n" + angle;
-            output2.text = "Number of Petals: " + numOfPetals;
+            output2.text = "Number of L-System Iterations: " + numOfIters;
         }
         public void ListenerMethod(float value)
         {
@@ -40,7 +40,7 @@ namespace Assign4.UI
         public void ListenerMethod2(float value)
         {
             //Debug.Log(value);
-            numOfPetals = (int)value;
+            numOfIters = (int)value;
         }
 
         public void ListenerMethodForRuleSet(int index)
