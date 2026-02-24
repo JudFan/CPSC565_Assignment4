@@ -44,8 +44,10 @@ public class WorldManager : MonoBehaviour
     {
         Symbol grow = new Symbol('G');
         Symbol bloom = new Symbol('B');
+        Symbol save = new Symbol('[');
+        Symbol load = new Symbol(']');
 
-        List<Symbol> intoBloomOutput = new List<Symbol> {grow, bloom};
+        List<Symbol> intoBloomOutput = new List<Symbol> {grow, save, bloom, load};
         List<Symbol> intoBloomOutput2 = new List<Symbol> {bloom, grow};
 
         Rule intoBloom = new Rule(grow, intoBloomOutput);

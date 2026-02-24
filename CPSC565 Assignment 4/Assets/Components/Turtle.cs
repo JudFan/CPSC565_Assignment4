@@ -70,18 +70,35 @@ public class Turtle : MonoBehaviour
                 case 'A':
                     Debug.Log('A');
                     break;
+
                 case 'B':
                     Debug.Log('B');
                     break;
+
                 case 'G':
                     Debug.Log('G');
                     break;
+
                 case 'P':
                     Debug.Log('P');
                     break;
+
                 case 'p':
                     Debug.Log('p');
                     break;
+
+                case '[':
+                    Debug.Log('[');
+                    memoryPositions.Push(position);
+                    Debug.Log("Position Saved: " + position);
+                    break;
+
+                case ']':
+                    Debug.Log(']');
+                    position = memoryPositions.Pop();
+                    Debug.Log("New Position Loaded: " + position);
+                    break;
+
                 default:
                     break;
             }
