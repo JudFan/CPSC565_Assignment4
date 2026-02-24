@@ -44,22 +44,30 @@ public class WorldManager : MonoBehaviour
     {
         Symbol grow = new Symbol('G');
         Symbol bloom = new Symbol('B');
+        Symbol addIntobloom = new Symbol('A');
+        Symbol makePetalBody = new Symbol('P');
+        Symbol makePetalEdge = new Symbol('p');
         Symbol save = new Symbol('[');
         Symbol load = new Symbol(']');
 
-        List<Symbol> intoBloomOutput = new List<Symbol> {grow, save, bloom, load};
-        List<Symbol> intoBloomOutput2 = new List<Symbol> {bloom, grow};
+        Symbol end = new Symbol('E');
 
-        Rule intoBloom = new Rule(grow, intoBloomOutput);
-        Rule bloomGrow = new Rule(bloom, intoBloomOutput2);
+        List<Symbol> growing = new List<Symbol> {grow, grow};
+        List<Symbol> makePetals = new List<Symbol> {save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load};
+        List<Symbol> blooming = new List<Symbol> {bloom, grow, end};
 
-        List<Rule> ruleList = new List<Rule> {intoBloom};
+        // TO DO ENFORCE CONTEXT SENSITIVE RULES
+        Rule toGrow = new Rule(grow, growing);
+        Rule petalMake = new Rule(bloom, makePetals);
+        Rule toBloom = new Rule(bloom, blooming);
 
-        List<Rule> ruleList2 = new List<Rule> {bloomGrow};
+        List<Rule> ruleList = new List<Rule> {toGrow, petalMake, toBloom};
 
-        LSystem sys1 = new LSystem(ruleList, new List<Symbol> {grow});
+        List<Rule> ruleList2 = new List<Rule> {toGrow};
 
-        LSystem sys2 = new LSystem(ruleList2, new List<Symbol> {grow});
+        LSystem sys1 = new LSystem(ruleList, new List<Symbol> {grow, end});
+
+        LSystem sys2 = new LSystem(ruleList2, new List<Symbol> {grow, end});
 
         systems = new List<LSystem>();
 

@@ -7,6 +7,9 @@ public class Rule
     public Symbol Predecessor;
     public List<Symbol> Successor;
 
+    public List<Symbol> leftNeighbour;
+    public List<Symbol> rightNeighbour;
+
     public Rule(Symbol PreIn, List<Symbol> SucIn)
     {
         Predecessor = PreIn;

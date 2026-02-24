@@ -1,7 +1,14 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using Assign4.UI;
+
+public struct petal {
+    public GameObject item;
+    public Vector3 positionToRotateAbout;
+    public Vector3 axisToRotateAbout;
+}
 
 public class Turtle : MonoBehaviour
 {
@@ -21,12 +28,13 @@ public class Turtle : MonoBehaviour
     /// <summary>
     /// This stack helps turtle memorise and load the position to spawn new shapes from
     /// </summary>
-    public Stack<Vector3> memoryPositions;
+    public Stack<int> memoryHeight;
 
     /// <summary>
     /// This is the position of the shape turtle spawns it at. It changes as shapes get spawned.
     /// </summary>
     public Vector3 position;
+    
 
     /// <summary>
     /// The UI it grabs info from
@@ -34,34 +42,53 @@ public class Turtle : MonoBehaviour
     public UI_for_Setup ui;
 
     /// <summary>
-    /// The list of petals it will control to bloom
+    /// The list of petals shapes
     /// </summary>
-    private List<GameObject> petals;
+    private List<petal> petals;
 
-    public GameObject shape;
+    /// <summary>
+    /// The list of petals shapes that will bloom
+    /// </summary>
+    private List<petal> bloomingPetals;
+
+    /// <summary>
+    /// The height of the plant
+    /// </summary>
     private int height;
+
+    /// <summary>
+    /// The angle used to set polar coordinates for the petals
+    /// </summary>
+    private float polarAngle;
+
+    /// <summary>
+    /// The number of moves needed to bloom the flower
+    /// </summary>
+    private int move;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         LSystemCommand = null;
-        memoryPositions = new Stack<Vector3>();
+        memoryHeight = new Stack<int>();
+        bloomingPetals = new List<petal>();
+        petals = new List<petal>();
         position = new Vector3(0,0,0);
         height = 0;
+        polarAngle = 0.0f;
+        move = 0;
 
-        Debug.Log("Making a shape");
-        List<Vector3> list =  new List<Vector3>();
-        list.Add(new Vector3(0,1,0));
-        list.Add(new Vector3(1,0,0));
-        list.Add(new Vector3(0,0,1));
-        shape = LGeom.FilledPolygon_Fan(list, material: MaterialList[1]);
-
+        LSystemCommand = "GGGGG[PApA][PApA][PApA][PApA][PApA]B";
     }
 
     // Update is called once per frame
     void Update()
     {
+        //int numOfMoves = ui.angle / 2;
+        int numOfMoves = 80 / 2;
+         
+        
         if(LSystemCommand is not null && LSystemCommand.Length > 0)
         {
             Debug.Log("Turtle received: " + LSystemCommand);
@@ -69,34 +96,44 @@ public class Turtle : MonoBehaviour
             {
                 case 'A':
                     Debug.Log('A');
+                    AddToBloom();
                     break;
 
                 case 'B':
                     Debug.Log('B');
+                    Bloom();
+                    if(move < numOfMoves)
+                    {
+                        LSystemCommand.Insert(0, "B");
+                    }
+                    move++;
                     break;
 
                 case 'G':
                     Debug.Log('G');
+                    Grow();
                     break;
 
                 case 'P':
                     Debug.Log('P');
+                    SetupPetal();
                     break;
 
                 case 'p':
                     Debug.Log('p');
+                    SetupPetal();
                     break;
 
                 case '[':
                     Debug.Log('[');
-                    memoryPositions.Push(position);
-                    Debug.Log("Position Saved: " + position);
+                    memoryHeight.Push(height);
+                    Debug.Log("Height Saved: " + height);
                     break;
 
                 case ']':
                     Debug.Log(']');
-                    position = memoryPositions.Pop();
-                    Debug.Log("New Position Loaded: " + position);
+                    height = memoryHeight.Pop();
+                    Debug.Log("New Height Loaded: " + height);
                     break;
 
                 default:
@@ -104,9 +141,7 @@ public class Turtle : MonoBehaviour
             }
             LSystemCommand = LSystemCommand.Remove(0,1);
         }
-        //shape.transform.RotateAround(new Vector3(1,0,1), new Vector3(-1,0,1), 2);
-        //Grow();
-        // Divide ui.Angle by 2 so you know how many times we need to unfurl the petal
+        
 
         // Also make a symbol to add a game object (petal) to a list of objects to rotate (and what axis to rotate by)
     }
@@ -124,20 +159,70 @@ public class Turtle : MonoBehaviour
 
     void SetupPetal()
     {
+        float polarSeparationDegree = 360 / 5;
+        float polarSeparationRadian = (polarSeparationDegree * MathF.PI)/180;
+
+        position = new Vector3(MathF.Sin(polarAngle), height, MathF.Cos(polarAngle));
+        polarAngle += polarSeparationRadian;
+        Vector3 endPos = new Vector3(MathF.Sin(polarAngle), height, MathF.Cos(polarAngle));
+
+        Vector3 axis = new Vector3(position.x - endPos.x, 0, position.z - endPos.z);
+        
+        Vector3 refPoint; 
+        GameObject shape;
+
         //Scenario1: Building foundation of petal (rectangle/square)
+        if(LSystemCommand[0] == 'P')
+        {
+            Vector3 startPosUp = new Vector3(position.x, height + 2, position.z);
+            Vector3 endPosUp = new Vector3(endPos.x, height + 2, endPos.z);
 
+            refPoint = new Vector3((position.x - endPos.x)/2, height, (position.z - endPos.z)/2);
+
+            List<Vector3> list =  new List<Vector3>();
+            list.Add(position);
+            list.Add(endPos);
+            list.Add(startPosUp);
+            list.Add(endPosUp);
+            shape = LGeom.FilledPolygon_Strip(list, material: MaterialList[1]);
+
+            polarAngle -= polarSeparationRadian;
+            height += 2;
+        }
         //Scenario2: Building edge of petal (triangle)
+        else
+        {
+            Vector3 point = new Vector3(0, height + 2, 0);
 
+            refPoint = new Vector3((position.x - endPos.x)/2, height-2, (position.z - endPos.z)/2);
+
+            List<Vector3> list =  new List<Vector3>();
+            list.Add(position);
+            list.Add(endPos);
+            list.Add(point);
+            shape = LGeom.FilledPolygon_Triangles(list, material: MaterialList[1]);
+        }
+
+        petal petalIn;
+        petalIn.item = shape;
+        petalIn.axisToRotateAbout = axis;
+        petalIn.positionToRotateAbout = refPoint;
+
+        petals.Add(petalIn);
     }
 
     void AddToBloom()
     {
-        
+        bloomingPetals.Add(petals[petals.Count - 1]);
     }
 
     void Bloom()
     {
-        
+        // Divide ui.Angle by 2 so you know how many times we need to unfurl the petal
+            foreach(petal petalPiece in bloomingPetals)
+            {
+                petalPiece.item.transform.RotateAround(petalPiece.positionToRotateAbout, petalPiece.axisToRotateAbout, -2);
+            }
     }
 
     // 2nd idea: use randomised param to make a turtle grow a tree, and randomly decide if the tree sprouts more branches/leaves or sprouts a fruit.
