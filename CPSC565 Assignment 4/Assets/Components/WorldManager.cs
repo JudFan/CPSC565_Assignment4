@@ -53,21 +53,28 @@ public class WorldManager : MonoBehaviour
         Symbol end = new Symbol('E');
 
         List<Symbol> growing = new List<Symbol> {grow, grow};
-        List<Symbol> makePetals = new List<Symbol> {save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load};
+        List<Symbol> makePetals = new List<Symbol> {grow, save, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, load, end};
         List<Symbol> blooming = new List<Symbol> {bloom, grow, end};
 
+        List<Symbol> justEnd = new List<Symbol> {end};
+        List<Symbol> enoughHeight = new List<Symbol> {grow, grow, grow, grow, grow};
+        List<Symbol> petal = new List<Symbol> {load, load};
+
+        List<Symbol> empty = new List<Symbol> {};
+
         // TO DO ENFORCE CONTEXT SENSITIVE RULES
-        Rule toGrow = new Rule(grow, growing);
-        Rule petalMake = new Rule(bloom, makePetals);
-        Rule toBloom = new Rule(bloom, blooming);
+        Rule toGrow = new Rule(grow, growing, empty, justEnd);
+        Rule petalMake = new Rule(end, makePetals, enoughHeight, empty);
+        Rule toBloom = new Rule(end, blooming, petal, empty);
 
         List<Rule> ruleList = new List<Rule> {toGrow, petalMake, toBloom};
 
         List<Rule> ruleList2 = new List<Rule> {toGrow};
 
-        LSystem sys1 = new LSystem(ruleList, new List<Symbol> {grow, end});
 
-        LSystem sys2 = new LSystem(ruleList2, new List<Symbol> {grow, end});
+        LSystem sys1 = new LSystem(ruleList, new List<Symbol> {grow, end}, ui);
+
+        LSystem sys2 = new LSystem(ruleList2, new List<Symbol> {grow, end}, ui);
 
         systems = new List<LSystem>();
 

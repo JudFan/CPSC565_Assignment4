@@ -6,7 +6,6 @@ public class Rule
 {
     public Symbol Predecessor;
     public List<Symbol> Successor;
-    public List<Symbol> LSystemString;
 
     public List<Symbol> leftContext;
     public List<Symbol> rightContext;
@@ -20,11 +19,10 @@ public class Rule
     }
 
     // Alternative constructor 
-    public Rule(Symbol PreIn, List<Symbol> SucIn, List<Symbol> listIn, List<Symbol> leftIn, List<Symbol> rightIn)
+    public Rule(Symbol PreIn, List<Symbol> SucIn, List<Symbol> leftIn, List<Symbol> rightIn)
     {
         Predecessor = PreIn;
         Successor = SucIn;
-        LSystemString = listIn;
         leftContext = leftIn;
         rightContext = rightIn;
 
@@ -48,11 +46,15 @@ public class Rule
         }
     }
 
-    public List<Symbol> contextSensitiveRuleChange(Symbol input, int index)
+    public List<Symbol> contextSensitiveRuleChange(Symbol input, int index, List<Symbol> LSystemString)
     {
+        // bools to check if left/right contexts match
+        bool leftMatch = false;
+        bool rightMatch = false;
 
-        // Boolean here to account for bracketing
-        bool bracketed = false;
+        // int metric here to account for bracketing: [ adds 1, ] subtracts 1
+        // 0 means no bracketing is occuring. non 0 means there is bracketing
+        int bracketingMetric = 0;
 
         // Need to memorise index of the closing bracket and the index of the symbol after it if any
         int closeBracketIndex = 0;
@@ -61,176 +63,203 @@ public class Rule
         // Checking for context for left context
         int exploreIndex = index - 1;
         int neighbourIndex = leftContext.Count - 1;
-        while(exploreIndex >= 0)
+
+
+        if(leftContext.Count > 0)
         {
-            // Scenario 1: No bracketing in left context 
-            if(!leftContextHasBrackets)
+            Debug.Log("Checking left context");
+            while(exploreIndex >= 0)
             {
-                if(!bracketed)
+                // Scenario 1: No bracketing in left context 
+                if(!leftContextHasBrackets)
                 {
-                    if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
+                    if(bracketingMetric == 0)
                     {
-                        preClosedBracketIndex = neighbourIndex - 1;
-                        neighbourIndex--;
+                        if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
+                        {
+                            preClosedBracketIndex = neighbourIndex - 1;
+                            neighbourIndex--;
+                        }
+                        else if(LSystemString[exploreIndex].symbol == ']')
+                        {
+                            bracketingMetric--;
+                        } 
+                        else if(LSystemString[exploreIndex].symbol != '[') // Harmless to see a raw open bracket 
+                        {
+                            // match not found
+                            return null; 
+                        }
                     }
-                    else if(LSystemString[exploreIndex].symbol == ']')
+                    else  
                     {
-                        bracketed = true;
-                    } 
-                    else if(LSystemString[exploreIndex].symbol != '[') // Harmless to see a raw open bracket 
-                    {
-                        // match not found
-                        return null; 
+                        if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
+                        {
+                            neighbourIndex++;
+                        }
+                        else if(LSystemString[exploreIndex].symbol == '[')
+                        {
+                            // match not found: restart search from preClosedBracketIndex
+                            neighbourIndex = preClosedBracketIndex;
+                            bracketingMetric++;
+                        }
                     }
                 }
-                else  
-                {
-                    if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
-                    {
-                        neighbourIndex++;
-                    }
-                    else if(LSystemString[exploreIndex].symbol == '[')
-                    {
-                        // match not found: restart search from preClosedBracketIndex
-                        neighbourIndex = preClosedBracketIndex;
-                    }
-                }
-            }
-            // Scenario 2: The left context has brackets -> Now we need to be more careful
-            else
-            {
-                // Finds immediate neighbour to be a match -> Progress made in search
-                if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
-                {
-                    if(LSystemString[exploreIndex].symbol == ']')
-                    {
-                        bracketed = true;
-                        closeBracketIndex = neighbourIndex;
-                    } 
-                    else if(!bracketed)
-                    {
-                        preClosedBracketIndex = neighbourIndex - 1;
-                    }
-                    neighbourIndex--;
-                }
-                // Finds raw opening bracket that is not a match with the left context -> Reset search parameters to before first closed bracket
-                else if(LSystemString[exploreIndex].symbol == '[')
-                {
-                    neighbourIndex = preClosedBracketIndex;
-                }
-                else if(!bracketed)
-                {
-                    // match not found: Incorrect neighboring symbol from root
-                    return null; 
-                }
+                // Scenario 2: The left context has brackets -> Now we need to be more careful
                 else
                 {
-                    // Match not found in the bracket, must reset search within the bracket
-                    neighbourIndex = closeBracketIndex;
-                }
-            } 
+                    // Finds immediate neighbour to be a match -> Progress made in search
+                    if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
+                    {
+                        if(LSystemString[exploreIndex].symbol == ']')
+                        {
+                            bracketingMetric--;
+                            closeBracketIndex = neighbourIndex;
+                        } 
+                        else if(LSystemString[exploreIndex].symbol == '[' && bracketingMetric != 0)
+                        {
+                            bracketingMetric++;
+                        } 
+                        else if(bracketingMetric == 0)
+                        {
+                            preClosedBracketIndex = neighbourIndex - 1;
+                        }
+                        neighbourIndex--;
+                    }
+                    // Finds raw opening bracket that is not a match with the left context -> Reset search parameters to latest closed bracket
+                    else if(LSystemString[exploreIndex].symbol == '[')
+                    {
+                        neighbourIndex = closeBracketIndex;
+                        bracketingMetric++;
+                    }
+                    else if(bracketingMetric == 0)
+                    {
+                        // match not found: Incorrect neighboring symbol from root
+                        return null; 
+                    }
+                    else
+                    {
+                        // Match not found in the bracket, must reset search within the bracket
+                        neighbourIndex = closeBracketIndex - 1;
+                    }
+                } 
 
-            exploreIndex--;
-            if(neighbourIndex < 0)
-            {
-                return Successor;
+                exploreIndex--;
+                if(neighbourIndex < 0)
+                {
+                    leftMatch = true;
+                    break;
+                }
+                if(exploreIndex < 0)
+                {
+                    return null;
+                }
             }
-            if(exploreIndex < 0)
-            {
-                return null;
-            }
+        }
+        else
+        {
+            leftMatch = true;
         }
 
         // Checking for context for right neighbour (reset local variables here)
         exploreIndex = index + 1;
         neighbourIndex = 0;
-        bracketed = false;
+        bracketingMetric = 0;
 
         // Need to memorise index of the right context if an open bracket is discovered and index of the open bracket
         int preOpenBracketIndex = 0;
         int openBracketIndex = 0;
 
-        while (exploreIndex < LSystemString.Count)
-        {
-            // Scenario 1: No brackets in right context
-            if(!rightContextHasBrackets)
+        if(rightContext.Count > 0) {
+            Debug.Log("Checking right context");
+            while (exploreIndex < LSystemString.Count)
             {
-                if(!bracketed)
+                // Scenario 1: No brackets in right context
+                if(!rightContextHasBrackets)
                 {
-                    if(LSystemString[exploreIndex].symbol == rightContext[neighbourIndex].symbol)
+                    if(bracketingMetric == 0)
                     {
-                        preOpenBracketIndex = neighbourIndex + 1;
-                        neighbourIndex++;
+                        if(LSystemString[exploreIndex].symbol == rightContext[neighbourIndex].symbol)
+                        {
+                            preOpenBracketIndex = neighbourIndex + 1;
+                            neighbourIndex++;
+                        }
+                        else if(LSystemString[exploreIndex].symbol == ']')
+                        {
+                            // match not found: raw closed bracket means no more left neighbours
+                            return null;
+                        } 
+                        else if(LSystemString[exploreIndex].symbol != '[') // Harmless to see a raw open bracket 
+                        {
+                            bracketingMetric++;
+                        }
                     }
-                    else if(LSystemString[exploreIndex].symbol == ']')
+                    else 
                     {
-                        // match not found: raw closed bracket means no more left neighbours
-                        return null;
-                    } 
-                    else if(LSystemString[exploreIndex].symbol != '[') // Harmless to see a raw open bracket 
-                    {
-                        bracketed = true;
+                        if(LSystemString[exploreIndex].symbol == rightContext[neighbourIndex].symbol)
+                        {
+                            neighbourIndex++;
+                        }
+                        else if(LSystemString[exploreIndex].symbol == ']')
+                        {
+                            // match not found: restart search from preOpenBracketIndex
+                            neighbourIndex = preOpenBracketIndex;
+                            bracketingMetric--;
+                        }
                     }
                 }
-                else 
-                {
-                    if(LSystemString[exploreIndex].symbol == rightContext[neighbourIndex].symbol)
-                    {
-                        neighbourIndex++;
-                    }
-                    else if(LSystemString[exploreIndex].symbol == ']')
-                    {
-                        // match not found: restart search from preOpenBracketIndex
-                        neighbourIndex = preOpenBracketIndex;
-                    }
-                }
-            }
 
-            /**
-            // Scenario 2: brackets in the right context
-            else
-            {
-                // Finds immediate neighbour to be a match -> Progress made in search
-                if(LSystemString[exploreIndex].symbol == rightContext[neighbourIndex].symbol)
-                {
-                    if(LSystemString[exploreIndex].symbol == '[')
-                    {
-                        bracketed = true;
-                        openBracketIndex = neighbourIndex;
-                    } 
-                    else if(!bracketed)
-                    {
-                        preOpenBracketIndex = neighbourIndex + 1;
-                    }
-                    neighbourIndex++;
-                }
-                // Finds closing bracket that is not a match with the left context -> Reset search parameters to before first open bracket
-                else if(LSystemString[exploreIndex].symbol == ']' && bracketed)
-                {
-                    neighbourIndex = preOpenBracketIndex;
-                }
-                else if(LSystemString[exploreIndex].symbol != '[' && !bracketed)
-                {
-                    // match not found: Incorrect neighboring symbol from root
-                    return null; 
-                }
+                
+                // Scenario 2: brackets in the right context
                 else
                 {
-                    // Match not found in the bracket, must reset search within the bracket
-                    neighbourIndex = openBracketIndex;
-                }   
-            }
-            **/
+                    // Finds immediate neighbour to be a match -> Progress made in search
+                    if(LSystemString[exploreIndex].symbol == rightContext[neighbourIndex].symbol)
+                    {
+                        if(LSystemString[exploreIndex].symbol == '[')
+                        {
+                            bracketingMetric++;
+                            openBracketIndex = neighbourIndex;
+                        } 
+                        else if(bracketingMetric == 0)
+                        {
+                            preOpenBracketIndex = neighbourIndex + 1;
+                        }
+                        neighbourIndex++;
+                    }
+                    // Finds closing bracket that is not a match with the left context -> Reset search parameters to latest open bracket
+                    else if(LSystemString[exploreIndex].symbol == ']' && bracketingMetric != 0)
+                    {
+                        neighbourIndex = openBracketIndex;
+                        bracketingMetric--;
+                    }
+                    else if(LSystemString[exploreIndex].symbol != '[' && bracketingMetric == 0)
+                    {
+                        // match not found: Incorrect neighboring symbol from root
+                        return null; 
+                    }
+                }
+                
 
-            exploreIndex++;
-            if(neighbourIndex >= rightContext.Count)
-            {
-                return Successor;
+                exploreIndex++;
+                if(neighbourIndex >= rightContext.Count)
+                {
+                    rightMatch = true;
+                    break;
+                }
+                if(exploreIndex >= LSystemString.Count)
+                {
+                    return null;
+                }
             }
-            if(exploreIndex >= LSystemString.Count)
-            {
-                return null;
-            }
+        }
+        else
+        {
+            rightMatch = true;
+        }
+
+        if(leftMatch && rightMatch)
+        {
+            return Successor;
         }
         return null;
     }

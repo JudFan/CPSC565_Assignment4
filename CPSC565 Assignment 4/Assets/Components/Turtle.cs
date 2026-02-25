@@ -28,7 +28,7 @@ public class Turtle : MonoBehaviour
     /// <summary>
     /// This stack helps turtle memorise and load the position to spawn new shapes from
     /// </summary>
-    public Stack<int> memoryHeight;
+    public Stack<Vector3> memoryPos;
 
     /// <summary>
     /// This is the position of the shape turtle spawns it at. It changes as shapes get spawned.
@@ -40,6 +40,11 @@ public class Turtle : MonoBehaviour
     /// The UI it grabs info from
     /// </summary>
     public UI_for_Setup ui;
+
+    /// <summary>
+    /// The list of GameObjects
+    /// </summary>
+    private List<GameObject> objects;
 
     /// <summary>
     /// The list of petals shapes
@@ -71,22 +76,22 @@ public class Turtle : MonoBehaviour
     void Start()
     {
         LSystemCommand = null;
-        memoryHeight = new Stack<int>();
+        memoryPos = new Stack<Vector3>();
         bloomingPetals = new List<petal>();
+        objects = new List<GameObject>();
         petals = new List<petal>();
         position = new Vector3(0,0,0);
         height = 0;
         polarAngle = 0.0f;
         move = 0;
 
-        LSystemCommand = "GGGGG[PApA][PApA][PApA][PApA][PApA]B";
+        LSystemCommand = "GGGGG[[PApA][PApA][PApA][PApA][PApA]]BEGGGGG";
     }
 
     // Update is called once per frame
     void Update()
     {
-        //int numOfMoves = ui.angle / 2;
-        int numOfMoves = 80 / 2;
+        int numOfMoves = ui.angle / 2;
          
         
         if(LSystemCommand is not null && LSystemCommand.Length > 0)
@@ -104,7 +109,8 @@ public class Turtle : MonoBehaviour
                     Bloom();
                     if(move < numOfMoves)
                     {
-                        LSystemCommand.Insert(0, "B");
+                        LSystemCommand = LSystemCommand.Insert(0, "B");
+                        Debug.Log("Updated: " + LSystemCommand);
                     }
                     move++;
                     break;
@@ -126,14 +132,15 @@ public class Turtle : MonoBehaviour
 
                 case '[':
                     Debug.Log('[');
-                    memoryHeight.Push(height);
-                    Debug.Log("Height Saved: " + height);
+                    memoryPos.Push(position);
+                    Debug.Log("Position saved: " + position);
                     break;
 
                 case ']':
                     Debug.Log(']');
-                    height = memoryHeight.Pop();
-                    Debug.Log("New Height Loaded: " + height);
+                    position = memoryPos.Pop();
+                    height = (int)position.y;
+                    Debug.Log("New Position Loaded: " + position);
                     break;
 
                 default:
@@ -141,9 +148,26 @@ public class Turtle : MonoBehaviour
             }
             LSystemCommand = LSystemCommand.Remove(0,1);
         }
-        
 
         // Also make a symbol to add a game object (petal) to a list of objects to rotate (and what axis to rotate by)
+    }
+
+    // Helper function that resets structure whenever the start button is called.
+    public void Reset()
+    {
+        foreach(GameObject obj in objects)
+        {
+            Destroy(obj);
+        }
+
+        memoryPos = new Stack<Vector3>();
+        bloomingPetals = new List<petal>();
+        objects = new List<GameObject>();
+        petals = new List<petal>();
+        position = new Vector3(0,0,0);
+        height = 0;
+        polarAngle = 0.0f;
+        move = 0;
     }
 
 
@@ -151,8 +175,11 @@ public class Turtle : MonoBehaviour
     void Grow()
     {
         Vector3 endpt = new Vector3(0, height + 1, 0);
+        Debug.Log(position);
+        Debug.Log(endpt);
 
         GameObject stem = LGeom.Cylinder(position, endpt, 0.5f, material: MaterialList[0]);
+        objects.Add(stem);
         position = endpt;
         height++;
     }
@@ -209,6 +236,7 @@ public class Turtle : MonoBehaviour
         petalIn.positionToRotateAbout = refPoint;
 
         petals.Add(petalIn);
+        objects.Add(shape);
     }
 
     void AddToBloom()
