@@ -85,7 +85,7 @@ public class Turtle : MonoBehaviour
         polarAngle = 0.0f;
         move = 0;
 
-        LSystemCommand = "GGGGG[[PApA][PApA][PApA][PApA][PApA]]BEGGGGG";
+        LSystemCommand = "Unnsweww[F]UUsss";//"GGGGG[[PApA][PApA][PApA][PApA][PApA]]BEGGGGG";
     }
 
     // Update is called once per frame
@@ -99,6 +99,7 @@ public class Turtle : MonoBehaviour
             Debug.Log("Turtle received: " + LSystemCommand);
             switch (LSystemCommand[0])
             {
+                // L System 1 scenarios
                 case 'A':
                     Debug.Log('A');
                     AddToBloom();
@@ -110,7 +111,6 @@ public class Turtle : MonoBehaviour
                     if(move < numOfMoves)
                     {
                         LSystemCommand = LSystemCommand.Insert(0, "B");
-                        Debug.Log("Updated: " + LSystemCommand);
                     }
                     move++;
                     break;
@@ -130,6 +130,40 @@ public class Turtle : MonoBehaviour
                     SetupPetal();
                     break;
 
+
+                // L System 2 scenarios
+
+                case 'F':
+                    Debug.Log('F');
+                    MakeFruit();
+                    break;
+
+                case 'U':
+                    Debug.Log('U');
+                    GrowTree();
+                    break;
+
+                case 'n':
+                    Debug.Log('n');
+                    GrowTree();
+                    break;
+
+                case 's':
+                    Debug.Log('s');
+                    GrowTree();
+                    break;
+
+                case 'e':
+                    Debug.Log('e');
+                    GrowTree();
+                    break;
+
+                case 'w':
+                    Debug.Log('w');
+                    GrowTree();
+                    break;
+
+                // Common L System operation
                 case '[':
                     Debug.Log('[');
                     memoryPos.Push(position);
@@ -175,8 +209,6 @@ public class Turtle : MonoBehaviour
     void Grow()
     {
         Vector3 endpt = new Vector3(0, height + 1, 0);
-        Debug.Log(position);
-        Debug.Log(endpt);
 
         GameObject stem = LGeom.Cylinder(position, endpt, 0.5f, material: MaterialList[0]);
         objects.Add(stem);
@@ -254,4 +286,52 @@ public class Turtle : MonoBehaviour
     }
 
     // 2nd idea: use randomised param to make a turtle grow a tree, and randomly decide if the tree sprouts more branches/leaves or sprouts a fruit.
+    void GrowTree()
+    {
+        int xDeviation = 0;
+        int zDeviation = 0;
+
+        switch (LSystemCommand[0])
+        {
+
+            case 'n':
+                zDeviation += 2;
+                break;
+
+            case 's':
+                zDeviation -= 2;
+                break;
+
+            case 'e':
+                xDeviation += 2;
+                break;
+
+            case 'w':
+                xDeviation -= 2;
+                break;
+
+            default:
+                break;
+        }
+        
+        Vector3 endpt = new Vector3(position.x + xDeviation, height + 2, position.z + zDeviation);
+
+        GameObject treeStem  = LGeom.Cylinder(position, endpt, 1, material: MaterialList[2]);
+        objects.Add(treeStem);
+        position = endpt;
+        height += 2;
+    }
+
+    void MakeFruit()
+    {
+        position.y--;
+        Vector3 endpt = new Vector3(position.x, position.y - 1, position.z);
+        GameObject fruitStem = LGeom.Cylinder(position, endpt, 0.1f, material: MaterialList[0]);
+        position = endpt;
+        Vector3 center = new Vector3(position.x, position.y - 1.5f, position.z);
+        GameObject fruit = LGeom.Sphere(center, 1.5f, material: MaterialList[1]);
+        objects.Add(fruitStem);
+        objects.Add(fruit);
+    }
+
 }

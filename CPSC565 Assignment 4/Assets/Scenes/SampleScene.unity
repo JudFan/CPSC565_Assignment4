@@ -230,6 +230,7 @@ MonoBehaviour:
   MaterialList:
   - {fileID: 2100000, guid: 7830d3729081742428feb74cd99d7bb7, type: 2}
   - {fileID: 2100000, guid: 2a4b542bbb60465428557e794f67f0b4, type: 2}
+  - {fileID: 2100000, guid: 5d7d194e2f49fed429394f366add850c, type: 2}
   LSystemCommand: 
   position: {x: 0, y: 0, z: 0}
   ui: {fileID: 478963810}
@@ -1634,6 +1635,18 @@ MonoBehaviour:
       - m_Target: {fileID: 2053196055}
         m_TargetAssemblyTypeName: WorldManager, Assembly-CSharp
         m_MethodName: Execute
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 125952225}
+        m_TargetAssemblyTypeName: Turtle, Assembly-CSharp
+        m_MethodName: Reset
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
