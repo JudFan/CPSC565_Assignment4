@@ -85,7 +85,7 @@ public class Turtle : MonoBehaviour
         polarAngle = 0.0f;
         move = 0;
 
-        LSystemCommand = "Unnsweww[F]UUsss";//"GGGGG[[PApA][PApA][PApA][PApA][PApA]]BEGGGGG";
+        LSystemCommand = "GGGGG[[PApA][PApA][PApA][PApA][PApA]]BEGGGGG";//"Unnsweww[F]UUsss";
     }
 
     // Update is called once per frame
@@ -286,6 +286,7 @@ public class Turtle : MonoBehaviour
     }
 
     // 2nd idea: use randomised param to make a turtle grow a tree, and randomly decide if the tree sprouts more branches/leaves or sprouts a fruit.
+    // Improvement: 
     void GrowTree()
     {
         int xDeviation = 0;

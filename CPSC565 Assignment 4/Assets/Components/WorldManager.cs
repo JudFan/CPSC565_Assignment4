@@ -73,12 +73,11 @@ public class WorldManager : MonoBehaviour
         List<Symbol> petal = new List<Symbol> {load, load};
 
         // For 2nd L-System
-        List<Symbol> fruitOut = new List<Symbol> {growStrightUp, save, fruit, load};
+        /**
         List<Symbol> fruitOutN = new List<Symbol> {growNorthUp, save, fruit, load};
         List<Symbol> fruitOutS = new List<Symbol> {growSouthUp, save, fruit, load};
         List<Symbol> fruitOutE = new List<Symbol> {growEastUp, save, fruit, load};
         List<Symbol> fruitOutW = new List<Symbol> {growWestUp, save, fruit, load};
-        List<Symbol> fruitOutEnd = new List<Symbol> {end, save, fruit, load, growStrightUp};
 
         List<Symbol> straightOut = new List<Symbol> {growStrightUp, growStrightUp};
         List<Symbol> straightOutN = new List<Symbol> {growNorthUp, growStrightUp};
@@ -114,6 +113,7 @@ public class WorldManager : MonoBehaviour
         List<Symbol> straightOutE = new List<Symbol> {growEastUp, growWestUp};
         List<Symbol> straightOutW = new List<Symbol> {growWestUp, growWestUp};
         List<Symbol> straightOutEnd = new List<Symbol> {end, growWestUp};
+        **/
 
         // Used by both
         List<Symbol> empty = new List<Symbol> {};
