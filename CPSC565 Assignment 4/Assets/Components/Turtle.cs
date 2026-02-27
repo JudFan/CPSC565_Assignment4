@@ -85,13 +85,13 @@ public class Turtle : MonoBehaviour
         polarAngle = 0.0f;
         move = 0;
 
-        LSystemCommand = "GGGGG[[PApA][PApA][PApA][PApA][PApA]]BEGGGGG";//"Unnsweww[F]UUsss";
+        //LSystemCommand = "Unnsweww[F]UUsss";//"GGGGG[[PApA][PApA][PApA][PApA][PApA]]BEGGGGG";
     }
 
     // Update is called once per frame
     void Update()
     {
-        int numOfMoves = ui.angle / 2;
+        int numOfMoves = (int)(ui.angle / 0.1);
          
         
         if(LSystemCommand is not null && LSystemCommand.Length > 0)
@@ -113,6 +113,13 @@ public class Turtle : MonoBehaviour
                         LSystemCommand = LSystemCommand.Insert(0, "B");
                     }
                     move++;
+                    break;
+                
+                case 'b':
+                    Debug.Log('b');
+                    // Setup bloom procedure
+                    move = 0;
+                    Bud();
                     break;
 
                 case 'G':
@@ -172,7 +179,10 @@ public class Turtle : MonoBehaviour
 
                 case ']':
                     Debug.Log(']');
-                    position = memoryPos.Pop();
+                    try {
+                        position = memoryPos.Pop();
+                    }
+                    catch (Exception ex) {}
                     height = (int)position.y;
                     Debug.Log("New Position Loaded: " + position);
                     break;
@@ -214,6 +224,11 @@ public class Turtle : MonoBehaviour
         objects.Add(stem);
         position = endpt;
         height++;
+    }
+
+    void Bud() {
+        GameObject bud = LGeom.Sphere(position, 0.75f, material: MaterialList[1]);
+        objects.Add(bud);
     }
 
     void SetupPetal()
@@ -281,7 +296,7 @@ public class Turtle : MonoBehaviour
         // Divide ui.Angle by 2 so you know how many times we need to unfurl the petal
             foreach(petal petalPiece in bloomingPetals)
             {
-                petalPiece.item.transform.RotateAround(petalPiece.positionToRotateAbout, petalPiece.axisToRotateAbout, -2);
+                petalPiece.item.transform.RotateAround(petalPiece.positionToRotateAbout, petalPiece.axisToRotateAbout, -0.1f);
             }
     }
 
@@ -289,38 +304,45 @@ public class Turtle : MonoBehaviour
     // Improvement: 
     void GrowTree()
     {
-        int xDeviation = 0;
-        int zDeviation = 0;
+        float xDeviation = 0.0f;
+        float zDeviation = 0.0f;
+        float heightDeviation = 0.0f;
+        float deviationRadian = (ui.angle * MathF.PI)/180;
 
         switch (LSystemCommand[0])
         {
 
             case 'n':
-                zDeviation += 2;
+                zDeviation += (float)(3 * MathF.Sin(deviationRadian));
+                heightDeviation += (float)(3 * MathF.Cos(deviationRadian));
                 break;
 
             case 's':
-                zDeviation -= 2;
+                zDeviation -= (float)(3 * MathF.Sin(deviationRadian));
+                heightDeviation += (float)(3 * MathF.Cos(deviationRadian));
                 break;
 
             case 'e':
-                xDeviation += 2;
+                xDeviation += (float)(3 * MathF.Sin(deviationRadian));
+                heightDeviation += (float)(3 * MathF.Cos(deviationRadian));
                 break;
 
             case 'w':
-                xDeviation -= 2;
+                xDeviation -= (float)(3 * MathF.Sin(deviationRadian));
+                heightDeviation += (float)(3 * MathF.Cos(deviationRadian));
                 break;
 
             default:
+            heightDeviation += 3;
                 break;
         }
         
-        Vector3 endpt = new Vector3(position.x + xDeviation, height + 2, position.z + zDeviation);
+        Vector3 endpt = new Vector3((float)(position.x + xDeviation), height + heightDeviation, (float)(position.z + zDeviation));
 
         GameObject treeStem  = LGeom.Cylinder(position, endpt, 1, material: MaterialList[2]);
         objects.Add(treeStem);
         position = endpt;
-        height += 2;
+        height += 5;
     }
 
     void MakeFruit()

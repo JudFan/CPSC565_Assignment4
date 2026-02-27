@@ -21,14 +21,31 @@ namespace Assign4.UI
             angle = 0;
             numOfIters = 0;
             selectedRule = 1;
-            output.text = "Angle of Bloom:\n" + angle;
+
+            if(selectedRule == 1)
+            {
+                output.text = "Angle of Bloom:\n" + angle;
+            }
+            else if(selectedRule == 2)
+            {
+                output.text = "Angle of Branches:\n" + angle;
+            }
+            
             output2.text = "Number of L-System Iterations: " + numOfIters;
         }
 
         // Update is called once per frame
         void Update()
         {
-            output.text = "Angle of Bloom:\n" + angle;
+            if(selectedRule == 1)
+            {
+                output.text = "Angle of Bloom:\n" + angle;
+            }
+            else if(selectedRule == 2)
+            {
+                output.text = "Angle of Branches:\n" + angle;
+            }
+            
             output2.text = "Number of L-System Iterations: " + numOfIters;
         }
         public void ListenerMethod(float value)

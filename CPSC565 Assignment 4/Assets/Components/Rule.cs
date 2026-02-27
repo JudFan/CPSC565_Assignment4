@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Rule
 {
@@ -11,6 +12,8 @@ public class Rule
     public List<Symbol> rightContext;
     private bool leftContextHasBrackets;
     private bool rightContextHasBrackets;
+
+    public Rule(){}
 
     public Rule(Symbol PreIn, List<Symbol> SucIn)
     {
@@ -34,7 +37,7 @@ public class Rule
         rightContextHasBrackets = rightContext.Contains(open) || rightContext.Contains(close);
     }
 
-    public List<Symbol> RuleChange(Symbol input)
+    public virtual List<Symbol> RuleChange(Symbol input)
     {
         if (input.Equals(Predecessor))
         {
@@ -46,8 +49,12 @@ public class Rule
         }
     }
 
-    public List<Symbol> contextSensitiveRuleChange(Symbol input, int index, List<Symbol> LSystemString)
+    public List<Symbol> ContextSensitiveRuleChange(Symbol input, int index, List<Symbol> LSystemString)
     {
+        if (!input.Equals(Predecessor))
+        {
+            return null;
+        }
         // bools to check if left/right contexts match
         bool leftMatch = false;
         bool rightMatch = false;
@@ -57,7 +64,6 @@ public class Rule
         int bracketingMetric = 0;
 
         // Need to memorise index of the closing bracket and the index of the symbol after it if any
-        int closeBracketIndex = 0;
         int preClosedBracketIndex = leftContext.Count - 1;
 
         // Checking for context for left context
@@ -92,56 +98,13 @@ public class Rule
                     }
                     else  
                     {
-                        if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
+                        if(LSystemString[exploreIndex].symbol == '[')
                         {
-                            neighbourIndex++;
-                        }
-                        else if(LSystemString[exploreIndex].symbol == '[')
-                        {
-                            // match not found: restart search from preClosedBracketIndex
-                            neighbourIndex = preClosedBracketIndex;
+                            // Ignore what's in the brackets 
                             bracketingMetric++;
                         }
                     }
                 }
-                // Scenario 2: The left context has brackets -> Now we need to be more careful
-                else
-                {
-                    // Finds immediate neighbour to be a match -> Progress made in search
-                    if(LSystemString[exploreIndex].symbol == leftContext[neighbourIndex].symbol)
-                    {
-                        if(LSystemString[exploreIndex].symbol == ']')
-                        {
-                            bracketingMetric--;
-                            closeBracketIndex = neighbourIndex;
-                        } 
-                        else if(LSystemString[exploreIndex].symbol == '[' && bracketingMetric != 0)
-                        {
-                            bracketingMetric++;
-                        } 
-                        else if(bracketingMetric == 0)
-                        {
-                            preClosedBracketIndex = neighbourIndex - 1;
-                        }
-                        neighbourIndex--;
-                    }
-                    // Finds raw opening bracket that is not a match with the left context -> Reset search parameters to latest closed bracket
-                    else if(LSystemString[exploreIndex].symbol == '[')
-                    {
-                        neighbourIndex = closeBracketIndex;
-                        bracketingMetric++;
-                    }
-                    else if(bracketingMetric == 0)
-                    {
-                        // match not found: Incorrect neighboring symbol from root
-                        return null; 
-                    }
-                    else
-                    {
-                        // Match not found in the bracket, must reset search within the bracket
-                        neighbourIndex = closeBracketIndex - 1;
-                    }
-                } 
 
                 exploreIndex--;
                 if(neighbourIndex < 0)
@@ -166,8 +129,7 @@ public class Rule
         bracketingMetric = 0;
 
         // Need to memorise index of the right context if an open bracket is discovered and index of the open bracket
-        int preOpenBracketIndex = 0;
-        int openBracketIndex = 0;
+        Stack<int> preOpenBracketIndex = new Stack<int>();
 
         if(rightContext.Count > 0) {
             Debug.Log("Checking right context");
@@ -180,17 +142,19 @@ public class Rule
                     {
                         if(LSystemString[exploreIndex].symbol == rightContext[neighbourIndex].symbol)
                         {
-                            preOpenBracketIndex = neighbourIndex + 1;
                             neighbourIndex++;
                         }
-                        else if(LSystemString[exploreIndex].symbol == ']')
+                        else if(LSystemString[exploreIndex].symbol == '[')
+                        {
+                            // Harmless to see a raw open bracket                       
+                            preOpenBracketIndex.Push(neighbourIndex);
+                            bracketingMetric++;
+                            
+                        } 
+                        else
                         {
                             // match not found: raw closed bracket means no more left neighbours
                             return null;
-                        } 
-                        else if(LSystemString[exploreIndex].symbol != '[') // Harmless to see a raw open bracket 
-                        {
-                            bracketingMetric++;
                         }
                     }
                     else 
@@ -199,10 +163,16 @@ public class Rule
                         {
                             neighbourIndex++;
                         }
+                        else if(LSystemString[exploreIndex].symbol == '[')
+                        {
+                            // Harmless to see a raw open bracket
+                            preOpenBracketIndex.Push(neighbourIndex);
+                            bracketingMetric++;
+                        } 
                         else if(LSystemString[exploreIndex].symbol == ']')
                         {
                             // match not found: restart search from preOpenBracketIndex
-                            neighbourIndex = preOpenBracketIndex;
+                            neighbourIndex = preOpenBracketIndex.Pop();
                             bracketingMetric--;
                         }
                     }
@@ -218,18 +188,22 @@ public class Rule
                         if(LSystemString[exploreIndex].symbol == '[')
                         {
                             bracketingMetric++;
-                            openBracketIndex = neighbourIndex;
                         } 
-                        else if(bracketingMetric == 0)
+                        else if(LSystemString[exploreIndex].symbol == ']')
                         {
-                            preOpenBracketIndex = neighbourIndex + 1;
-                        }
+                            bracketingMetric--;
+                        } 
                         neighbourIndex++;
+                    }
+                    else if(LSystemString[exploreIndex].symbol == '[' && bracketingMetric == 0)
+                    {
+                        preOpenBracketIndex.Push(neighbourIndex);
+                        bracketingMetric++;
                     }
                     // Finds closing bracket that is not a match with the left context -> Reset search parameters to latest open bracket
                     else if(LSystemString[exploreIndex].symbol == ']' && bracketingMetric != 0)
                     {
-                        neighbourIndex = openBracketIndex;
+                        neighbourIndex = preOpenBracketIndex.Pop();
                         bracketingMetric--;
                     }
                     else if(LSystemString[exploreIndex].symbol != '[' && bracketingMetric == 0)

@@ -45,6 +45,7 @@ public class WorldManager : MonoBehaviour
         // Used by 1st L-System
         Symbol grow = new Symbol('G');
         Symbol bloom = new Symbol('B');
+        Symbol bud = new Symbol('b');
         Symbol addIntobloom = new Symbol('A');
         Symbol makePetalBody = new Symbol('P');
         Symbol makePetalEdge = new Symbol('p');
@@ -65,69 +66,87 @@ public class WorldManager : MonoBehaviour
 
         // For first L-System
         List<Symbol> growing = new List<Symbol> {grow, grow};
-        List<Symbol> makePetals = new List<Symbol> {grow, save, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, load, end};
-        List<Symbol> blooming = new List<Symbol> {bloom, grow, end};
+        List<Symbol> makePetals = new List<Symbol> {bud, save, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, save, makePetalBody, addIntobloom, makePetalEdge, addIntobloom, load, load, end};
+        List<Symbol> blooming = new List<Symbol> {bloom, grow};
 
         List<Symbol> justEnd = new List<Symbol> {end};
-        List<Symbol> enoughHeight = new List<Symbol> {grow, grow, grow, grow, grow};
-        List<Symbol> petal = new List<Symbol> {load, load};
+        List<Symbol> enoughHeight = new List<Symbol> {grow, grow};
+        List<Symbol> petal = new List<Symbol> {addIntobloom, load};
 
         // For 2nd L-System
-        /**
-        List<Symbol> fruitOutN = new List<Symbol> {growNorthUp, save, fruit, load};
-        List<Symbol> fruitOutS = new List<Symbol> {growSouthUp, save, fruit, load};
-        List<Symbol> fruitOutE = new List<Symbol> {growEastUp, save, fruit, load};
-        List<Symbol> fruitOutW = new List<Symbol> {growWestUp, save, fruit, load};
-
+        List<Symbol> fruitOut = new List<Symbol> {growStrightUp}; // Blank rule as fruit cannot spawn on a vertical branch
         List<Symbol> straightOut = new List<Symbol> {growStrightUp, growStrightUp};
+        List<Symbol> northOut = new List<Symbol> {growStrightUp, growNorthUp};
+        List<Symbol> southOut = new List<Symbol> {growStrightUp, growSouthUp};
+        List<Symbol> eastOut = new List<Symbol> {growStrightUp, growEastUp};
+        List<Symbol> westOut = new List<Symbol> {growStrightUp, growWestUp};
+        List<Symbol> saveStr = new List<Symbol> {growStrightUp, save};
+        List<Symbol> loadStr = new List<Symbol> {growStrightUp, load};
+
+        List<Symbol> fruitOutN = new List<Symbol> {growNorthUp, save, fruit, load};
         List<Symbol> straightOutN = new List<Symbol> {growNorthUp, growStrightUp};
+        List<Symbol> northOutN = new List<Symbol> {growNorthUp, growNorthUp};
+        List<Symbol> southOutN = new List<Symbol> {growNorthUp, growSouthUp};
+        List<Symbol> eastOutN = new List<Symbol> {growNorthUp, growEastUp};
+        List<Symbol> westOutN = new List<Symbol> {growNorthUp, growWestUp};
+        List<Symbol> saveN = new List<Symbol> {growNorthUp, save};
+        List<Symbol> loadN = new List<Symbol> {growNorthUp, load};
+        
+        List<Symbol> fruitOutS = new List<Symbol> {growSouthUp, save, fruit, load};
         List<Symbol> straightOutS = new List<Symbol> {growSouthUp, growStrightUp};
+        List<Symbol> northOutS = new List<Symbol> {growSouthUp, growNorthUp};
+        List<Symbol> southOutS = new List<Symbol> {growSouthUp, growSouthUp};
+        List<Symbol> eastOutS = new List<Symbol> {growSouthUp, growEastUp};
+        List<Symbol> westOutS = new List<Symbol> {growSouthUp, growWestUp};
+        List<Symbol> saveS = new List<Symbol> {growSouthUp, save};
+        List<Symbol> loadS = new List<Symbol> {growSouthUp, load};
+
+        List<Symbol> fruitOutE = new List<Symbol> {growEastUp, save, fruit, load};
         List<Symbol> straightOutE = new List<Symbol> {growEastUp, growStrightUp};
+        List<Symbol> northOutE = new List<Symbol> {growEastUp, growNorthUp};
+        List<Symbol> southOutE = new List<Symbol> {growEastUp, growSouthUp};
+        List<Symbol> eastOutE = new List<Symbol> {growEastUp, growEastUp};
+        List<Symbol> westOutE = new List<Symbol> {growEastUp, growWestUp};
+        List<Symbol> saveE = new List<Symbol> {growEastUp, save};
+        List<Symbol> loadE = new List<Symbol> {growEastUp, load};
+
+        List<Symbol> fruitOutW = new List<Symbol> {growWestUp, save, fruit, load};
         List<Symbol> straightOutW = new List<Symbol> {growWestUp, growStrightUp};
-        List<Symbol> straightOutEnd = new List<Symbol> {end, growStrightUp};
-
-        List<Symbol> straightOut = new List<Symbol> {growStrightUp, growNorthUp};
-        List<Symbol> straightOutN = new List<Symbol> {growNorthUp, growNorthUp};
-        List<Symbol> straightOutS = new List<Symbol> {growSouthUp, growNorthUp};
-        List<Symbol> straightOutE = new List<Symbol> {growEastUp, growNorthUp};
-        List<Symbol> straightOutW = new List<Symbol> {growWestUp, growNorthUp};
-        List<Symbol> straightOutEnd = new List<Symbol> {end, growNorthUp};
-
-        List<Symbol> straightOut = new List<Symbol> {growStrightUp, growSouthUp};
-        List<Symbol> straightOutN = new List<Symbol> {growNorthUp, growSouthUp};
-        List<Symbol> straightOutS = new List<Symbol> {growSouthUp, growSouthUp};
-        List<Symbol> straightOutE = new List<Symbol> {growEastUp, growSouthUp};
-        List<Symbol> straightOutW = new List<Symbol> {growWestUp, growSouthUp};
-        List<Symbol> straightOutEnd = new List<Symbol> {end, growSouthUp};
-
-        List<Symbol> straightOut = new List<Symbol> {growStrightUp, growEastUp};
-        List<Symbol> straightOutN = new List<Symbol> {growNorthUp, growEastUp};
-        List<Symbol> straightOutS = new List<Symbol> {growSouthUp, growEastUp};
-        List<Symbol> straightOutE = new List<Symbol> {growEastUp, growEastUp};
-        List<Symbol> straightOutW = new List<Symbol> {growWestUp, growEastUp};
-        List<Symbol> straightOutEnd = new List<Symbol> {end, growEastUp};
-
-        List<Symbol> straightOut = new List<Symbol> {growStrightUp, growWestUp};
-        List<Symbol> straightOutN = new List<Symbol> {growNorthUp, growWestUp};
-        List<Symbol> straightOutS = new List<Symbol> {growSouthUp, growWestUp};
-        List<Symbol> straightOutE = new List<Symbol> {growEastUp, growWestUp};
-        List<Symbol> straightOutW = new List<Symbol> {growWestUp, growWestUp};
-        List<Symbol> straightOutEnd = new List<Symbol> {end, growWestUp};
-        **/
+        List<Symbol> northOutW = new List<Symbol> {growWestUp, growNorthUp};
+        List<Symbol> southOutW = new List<Symbol> {growWestUp, growSouthUp};
+        List<Symbol> eastOutW = new List<Symbol> {growWestUp, growEastUp};
+        List<Symbol> westOutW = new List<Symbol> {growWestUp, growWestUp};
+        List<Symbol> saveW = new List<Symbol> {growWestUp, save};
+        List<Symbol> loadW = new List<Symbol> {growWestUp, load};
 
         // Used by both
         List<Symbol> empty = new List<Symbol> {};
 
-        // TO DO ENFORCE CONTEXT SENSITIVE RULES
+        // System 1 Rules
         Rule toGrow = new Rule(grow, growing, empty, justEnd);
         Rule petalMake = new Rule(end, makePetals, enoughHeight, empty);
-        Rule toBloom = new Rule(end, blooming, petal, empty);
+        Rule toBloom = new Rule(load, blooming, petal, justEnd);
 
         List<Rule> ruleList = new List<Rule> {toGrow, petalMake, toBloom};
 
-        // Unsure how to implement probability distribution like this
-        List<Rule> ruleList2 = new List<Rule> {toGrow};
+        // System 2 Rules
+        List<List<Symbol>> possibleOutcomes = new List<List<Symbol>> {fruitOut, straightOut, northOut, southOut, eastOut, westOut, saveStr, loadStr};
+        List<List<Symbol>> possibleOutcomesN = new List<List<Symbol>> {fruitOutN, straightOutN, northOutN, southOutN, eastOutN, westOutN, saveN, loadN};
+        List<List<Symbol>> possibleOutcomesS = new List<List<Symbol>> {fruitOutS, straightOutS, northOutS, southOutS, eastOutS, westOutS, saveS, loadS}; 
+        List<List<Symbol>> possibleOutcomesE = new List<List<Symbol>> {fruitOutE, straightOutE, northOutE, southOutE, eastOutE, westOutE, saveE, loadE}; 
+        List<List<Symbol>> possibleOutcomesW = new List<List<Symbol>> {fruitOutW, straightOutW, northOutW, southOutW, eastOutW, westOutW, saveW, loadW};
 
+        List<float> probDist = new List<float> {0.125f, 0.125f, 0.125f, 0.125f, 0.125f, 0.125f, 0.125f, 0.125f};
+
+        RuleRandom straightRules = new RuleRandom(growStrightUp, possibleOutcomes, probDist);
+        RuleRandom northRules = new RuleRandom(growNorthUp, possibleOutcomesN, probDist);;
+        RuleRandom southRules = new RuleRandom(growSouthUp, possibleOutcomesS, probDist);;
+        RuleRandom eastRules = new RuleRandom(growEastUp, possibleOutcomesE, probDist);;
+        RuleRandom westRules = new RuleRandom(growWestUp, possibleOutcomesW, probDist);;
+
+        // Each predecessor will have 8 rules each
+        List<Rule> ruleList2 = new List<Rule> {straightRules, northRules, southRules, eastRules, westRules};
+        
 
         LSystem sys1 = new LSystem(ruleList, new List<Symbol> {grow, end}, ui);
 
@@ -178,25 +197,12 @@ public class WorldManager : MonoBehaviour
         
         for(int i = 0; i < ui.numOfIters; i++)
         {
-            
-            if(ui.selectedRule == 1)
-            {
-                chosenSystem.step();
-            }
-            else if (ui.selectedRule == 2)
-            {
-                chosenSystem.stepRandom();
-            }
+            chosenSystem.step();
+
             Debug.Log("At index " + i + ": Current L-String = " + chosenSystem.convertToString());
         }
 
         turtle.LSystemCommand = chosenSystem.convertToString();
-    }
-
-    // Reset the world if need be
-    void ResetWorld()
-    {
-        
     }
 
     #endregion
