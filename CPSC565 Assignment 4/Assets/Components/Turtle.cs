@@ -93,7 +93,6 @@ public class Turtle : MonoBehaviour
     {
         int numOfMoves = (int)(ui.angle / 0.1);
          
-        
         if(LSystemCommand is not null && LSystemCommand.Length > 0)
         {
             Debug.Log("Turtle received: " + LSystemCommand);
@@ -101,12 +100,12 @@ public class Turtle : MonoBehaviour
             {
                 // L System 1 scenarios
                 case 'A':
-                    Debug.Log('A');
+                    //Debug.Log('A');
                     AddToBloom();
                     break;
 
                 case 'B':
-                    Debug.Log('B');
+                    //Debug.Log('B');
                     Bloom();
                     if(move < numOfMoves)
                     {
@@ -116,24 +115,24 @@ public class Turtle : MonoBehaviour
                     break;
                 
                 case 'b':
-                    Debug.Log('b');
+                    //Debug.Log('b');
                     // Setup bloom procedure
                     move = 0;
                     Bud();
                     break;
 
                 case 'G':
-                    Debug.Log('G');
+                    //Debug.Log('G');
                     Grow();
                     break;
 
                 case 'P':
-                    Debug.Log('P');
+                    //Debug.Log('P');
                     SetupPetal();
                     break;
 
                 case 'p':
-                    Debug.Log('p');
+                    //Debug.Log('p');
                     SetupPetal();
                     break;
 
@@ -141,50 +140,50 @@ public class Turtle : MonoBehaviour
                 // L System 2 scenarios
 
                 case 'F':
-                    Debug.Log('F');
+                    //Debug.Log('F');
                     MakeFruit();
                     break;
 
                 case 'U':
-                    Debug.Log('U');
+                    //Debug.Log('U');
                     GrowTree();
                     break;
 
                 case 'n':
-                    Debug.Log('n');
+                    //Debug.Log('n');
                     GrowTree();
                     break;
 
                 case 's':
-                    Debug.Log('s');
+                    //Debug.Log('s');
                     GrowTree();
                     break;
 
                 case 'e':
-                    Debug.Log('e');
+                    //Debug.Log('e');
                     GrowTree();
                     break;
 
                 case 'w':
-                    Debug.Log('w');
+                    //Debug.Log('w');
                     GrowTree();
                     break;
 
                 // Common L System operation
                 case '[':
-                    Debug.Log('[');
+                    //Debug.Log('[');
                     memoryPos.Push(position);
-                    Debug.Log("Position saved: " + position);
+                    //Debug.Log("Position saved: " + position);
                     break;
 
                 case ']':
-                    Debug.Log(']');
+                    //Debug.Log(']');
                     try {
                         position = memoryPos.Pop();
                     }
                     catch (Exception ex) {}
                     height = (int)position.y;
-                    Debug.Log("New Position Loaded: " + position);
+                    //Debug.Log("New Position Loaded: " + position);
                     break;
 
                 default:
