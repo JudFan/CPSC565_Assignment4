@@ -341,7 +341,7 @@ public class Turtle : MonoBehaviour
         GameObject treeStem  = LGeom.Cylinder(position, endpt, 1, material: MaterialList[2]);
         objects.Add(treeStem);
         position = endpt;
-        height += 5;
+        height += 3;
     }
 
     void MakeFruit()

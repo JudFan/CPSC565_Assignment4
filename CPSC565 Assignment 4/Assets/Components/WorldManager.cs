@@ -136,7 +136,7 @@ public class WorldManager : MonoBehaviour
         List<List<Symbol>> possibleOutcomesE = new List<List<Symbol>> {fruitOutE, straightOutE, northOutE, southOutE, eastOutE, westOutE, saveE, loadE}; 
         List<List<Symbol>> possibleOutcomesW = new List<List<Symbol>> {fruitOutW, straightOutW, northOutW, southOutW, eastOutW, westOutW, saveW, loadW};
 
-        List<float> probDist = new List<float> {0.125f, 0.125f, 0.125f, 0.125f, 0.125f, 0.125f, 0.125f, 0.125f};
+        List<float> probDist = new List<float> {0.15f, 0.06f, 0.11f, 0.11f, 0.11f, 0.11f, 0.2f, 0.15f};
 
         RuleRandom straightRules = new RuleRandom(growStrightUp, possibleOutcomes, probDist);
         RuleRandom northRules = new RuleRandom(growNorthUp, possibleOutcomesN, probDist);;
